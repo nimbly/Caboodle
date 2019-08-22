@@ -1,11 +1,11 @@
 {
-    "name": "nimbly/config",
+    "name": "nimbly\/config",
     "description": "Configuration and settings manager with autoloading from disk.",
     "type": "library",
     "require-dev": {
-        "phpunit/phpunit": "^8.3",
-		"vimeo/psalm": "^3.4",
-		"php-coveralls/php-coveralls": "^2.1"
+        "phpunit\/phpunit": "^8.3",
+        "vimeo\/psalm": "^3.4",
+        "php-coveralls\/php-coveralls": "^2.1"
     },
     "license": "MIT",
     "authors": [
@@ -13,13 +13,14 @@
             "name": "Brent Scheffler",
             "email": "brent@brentscheffler.com"
         }
-	],
-	"require": {
-		"php": ">=7.2"
-	},
-	"autoload": {
-		"psr-4": {
-			"nimbly\\Config\\": "src\/"
-		}
-	}
+    ],
+    "require": {
+        "php": ">=7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "nimbly\\Config\\": "src\/"
+        }
+    },
+    "version": "0.1"
 }
