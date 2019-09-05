@@ -3,7 +3,7 @@
 namespace nimbly\Config\Tests;
 
 use nimbly\Config\Config;
-use nimbly\Config\FilesystemLoader;
+use nimbly\Config\FileLoader;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,7 +13,7 @@ class ConfigTest extends TestCase
 {
 	public function test_constructor_sets_loaders()
 	{
-		$fileSystemLoader = new FilesystemLoader(__DIR__ . "/config");
+		$fileSystemLoader = new FileLoader(__DIR__ . "/config");
 
 		$config = new Config([$fileSystemLoader]);
 
@@ -51,7 +51,7 @@ class ConfigTest extends TestCase
 	public function test_auto_loading()
 	{
 		$config = new Config([
-			new FilesystemLoader(__DIR__ . "/config")
+			new FileLoader(__DIR__ . "/config")
 		]);
 
 		$this->assertEquals(
