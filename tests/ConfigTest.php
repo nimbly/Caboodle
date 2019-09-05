@@ -3,6 +3,7 @@
 namespace nimbly\Config\Tests;
 
 use nimbly\Config\Config;
+use nimbly\Config\FilesystemLoader;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -10,23 +11,25 @@ use PHPUnit\Framework\TestCase;
  */
 class ConfigTest extends TestCase
 {
-	public function test_constructor_sets_config_path()
+	public function test_constructor_sets_loaders()
 	{
-		$config = new Config(__DIR__ . "/config");
+		$fileSystemLoader = new FilesystemLoader(__DIR__ . "/config");
+
+		$config = new Config([$fileSystemLoader]);
 
 		$reflection = new \ReflectionClass($config);
 
-		$property = $reflection->getProperty('path');
+		$property = $reflection->getProperty('loaders');
         $property->setAccessible(true);
-		$path = $property->getValue($config);
 
-		$this->assertEquals(__DIR__ . "/config", $path);
+		$this->assertEquals([
+			$fileSystemLoader
+		], $property->getValue($config));
 	}
 
 	public function test_set()
 	{
-		$config = new Config(__DIR__ . "/config");
-
+		$config = new Config;
 		$config->set('foo', 'bar');
 
 		$this->assertEquals('bar', $config->get('foo'));
@@ -34,7 +37,7 @@ class ConfigTest extends TestCase
 
 	public function test_all()
 	{
-		$config = new Config(__DIR__ . "/config");
+		$config = new Config;
 		$config->set('foo', 'bar');
 
 		$this->assertEquals(
@@ -47,7 +50,9 @@ class ConfigTest extends TestCase
 
 	public function test_auto_loading()
 	{
-		$config = new Config(__DIR__ . "/config");
+		$config = new Config([
+			new FilesystemLoader(__DIR__ . "/config")
+		]);
 
 		$this->assertEquals(
 			[
@@ -67,7 +72,7 @@ class ConfigTest extends TestCase
 
 	public function test_getting_non_existant_value_returns_default()
 	{
-		$config = new Config(__DIR__ . "/config");
+		$config = new Config;
 
 		$this->assertEquals(
 			"default",

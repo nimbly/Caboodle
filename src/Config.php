@@ -5,12 +5,12 @@ namespace nimbly\Config;
 
 class Config
 {
-    /**
-     * Path on disk where config files are held.
-     *
-     * @var string
-     */
-    protected $path;
+	/**
+	 * Set of LoaderInterfaces to resolve config names.
+	 *
+	 * @var array<LoaderInterface>
+	 */
+	protected $loaders;
 
     /**
      * Config items.
@@ -22,11 +22,35 @@ class Config
     /**
      * Config constructor.
      *
-     * @param string $path
+     * @param array<LoaderInterface> $loaders
      */
-    public function __construct(string $path)
+    public function __construct(array $loaders = [])
     {
-        $this->path = $path;
+        $this->loaders = $loaders;
+	}
+
+	/**
+	 * Add a loader.
+	 *
+	 * @param LoaderInterface $loader
+	 * @return void
+	 */
+	public function addLoader(LoaderInterface $loader): void
+	{
+		$this->loaders[] = $loader;
+	}
+
+	/**
+	 * Sets the items loaded. This will overwrite *all* currently loaded items.
+	 *
+	 * This method is ideal for loading items directly in from cache.
+	 *
+	 * @param array<string, mixed> $items
+	 * @return void
+	 */
+	public function setItems(array $items): void
+	{
+		$this->items = $items;
 	}
 
     /**
@@ -97,11 +121,12 @@ class Config
      */
     public function get(string $key, $default = null)
     {
+		// Does this key/value pair exist in the item store?
         if( $this->has($key) === false ){
-
-            $this->loadFromFile($key);
+			$this->load($key);
         }
 
+		// Try resolving now.
         try {
 
             $configValue = $this->resolve($key);
@@ -116,7 +141,7 @@ class Config
     }
 
     /**
-     * Set a key/value pair.
+     * Set a key/value pair directly.
      *
      * @param string $key
      * @param mixed $value
@@ -125,31 +150,21 @@ class Config
     public function set(string $key, $value): void
     {
         $this->items[$key] = $value;
-    }
+	}
 
-    /**
-     * Load a file and assign it to the key.
-     *
-     * @param string $key
-     * @return void
-     */
-    protected function loadFromFile(string $key): void
-    {
-        // Auto resolve filename
-        if( \preg_match("/^([^\.]+)\.?/", $key, $match) ){
-
-            $key = $match[1];
-
-            $file = "{$this->path}/{$key}.php";
-
-            // Check for file's existence
-            if( \file_exists($file) === false ){
-				return;
-            }
-
-            // Pull config file in and add values into master config
-            $this->set($key, include $file);
-        }
-
+	/**
+	 * Loop through loaders and attempt to load configuration.
+	 *
+	 * @param string $key
+	 * @return void
+	 */
+	private function load(string $key): void
+	{
+		foreach( $this->loaders as $loader ){
+			if( ($items = \call_user_func([$loader, 'load'], $key)) ){
+				$this->items = \array_merge($this->items, $items);
+				break;
+			}
+		}
 	}
 }
