@@ -8,23 +8,61 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers nimbly\Config\Config
+ * @covers nimbly\Config\FileLoader
  */
 class ConfigTest extends TestCase
 {
 	public function test_constructor_sets_loaders()
 	{
-		$fileSystemLoader = new FileLoader(__DIR__ . "/config");
+		$fileLoader = new FileLoader(__DIR__ . "/config");
 
-		$config = new Config([$fileSystemLoader]);
+		$config = new Config([$fileLoader]);
 
 		$reflection = new \ReflectionClass($config);
-
 		$property = $reflection->getProperty('loaders');
         $property->setAccessible(true);
 
 		$this->assertEquals([
-			$fileSystemLoader
+			$fileLoader
 		], $property->getValue($config));
+	}
+
+	public function test_add_loader()
+	{
+		$config = new Config([new FileLoader(__DIR__)]);
+
+		$fileLoader = new FileLoader(__DIR__);
+		$config->addLoader($fileLoader);
+
+		$reflection = new \ReflectionClass($config);
+		$property = $reflection->getProperty('loaders');
+        $property->setAccessible(true);
+
+		$this->assertEquals([
+			$fileLoader,
+			$fileLoader
+		], $property->getValue($config));
+
+		$this->assertSame(
+			$fileLoader,
+			$property->getValue($config)[1]
+		);
+	}
+
+	public function test_set_items()
+	{
+		$config = new Config;
+
+		$items = [
+			'key1' => 'value1',
+			'key2' => [
+				'key3' => 'value3'
+			]
+		];
+
+		$config->setItems($items);
+
+		$this->assertEquals($items, $config->all());
 	}
 
 	public function test_set()

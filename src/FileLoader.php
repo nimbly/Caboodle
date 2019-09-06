@@ -26,7 +26,7 @@ class FileLoader implements LoaderInterface
      */
     public function load(string $key): ?array
     {
-        if( \preg_match("/^([^\.]+)\.?/", $key, $match) === false ){
+        if( \preg_match("/^([^\.]+)\.?/", $key, $match) == false ){
 			return null;
 		}
 
