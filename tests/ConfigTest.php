@@ -1,14 +1,15 @@
 <?php
 
-namespace nimbly\Config\Tests;
+namespace Caboodle\Tests;
 
-use nimbly\Config\Config;
-use nimbly\Config\FileLoader;
+use Caboodle\Config;
+use Caboodle\KeyNotFoundException;
+use Caboodle\Loaders\FileLoader;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers nimbly\Config\Config
- * @covers nimbly\Config\FileLoader
+ * @covers Caboodle\Config
+ * @covers Caboodle\Loaders\FileLoader
  */
 class ConfigTest extends TestCase
 {
@@ -108,13 +109,23 @@ class ConfigTest extends TestCase
 		);
 	}
 
-	public function test_getting_non_existant_value_returns_default()
+	public function test_getting_non_existant_value_returns_null()
 	{
 		$config = new Config;
 
-		$this->assertEquals(
-			"default",
-			$config->get("database.host", "default")
+		$this->assertNull(
+			$config->get("database.host")
 		);
+	}
+
+	public function test_set_throw_if_not_found()
+	{
+		$config = new Config;
+		$config->setThrowIfNotFound(true);
+
+		$this->expectException(KeyNotFoundException::class);
+		$config->get('example');
+
+		$config->get("#production.db.default#.host");
 	}
 }

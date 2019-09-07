@@ -1,5 +1,5 @@
 {
-    "name": "nimbly\/config",
+    "name": "nimbly\/caboodle",
     "description": "Configuration and settings manager with autoloading from disk or AWS Secrets Manager.",
     "type": "library",
     "require-dev": {
@@ -24,7 +24,7 @@
 	},
     "autoload": {
         "psr-4": {
-            "nimbly\\Config\\": "src\/"
+            "Caboodle\\": "src\/"
         }
     },
     "version": "0.1"

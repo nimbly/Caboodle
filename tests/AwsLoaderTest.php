@@ -1,13 +1,13 @@
 <?php
 
-namespace nimbly\Config\Tests;
+namespace Caboodle\Tests;
 
 use Aws\SecretsManager\SecretsManagerClient;
-use nimbly\Config\AwsLoader;
+use Caboodle\Loaders\AwsLoader;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers nimbly\Config\AwsLoader
+ * @covers Caboodle\Loaders\AwsLoader
  */
 class AwsLoaderTest extends TestCase
 {

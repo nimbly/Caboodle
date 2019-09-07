@@ -1,6 +1,6 @@
 <?php
 
-namespace nimbly\Config;
+namespace Caboodle\Loaders;
 
 use Aws\SecretsManager\Exception\SecretsManagerException;
 use Aws\SecretsManager\SecretsManagerClient;
@@ -28,25 +28,21 @@ class AwsLoader implements LoaderInterface
 	/**
 	 * @inheritDoc
 	 */
-	public function load(string $key): ?array
+	public function load(string $key, array $options = []): ?array
 	{
-		if( \preg_match("/^([^\.]+)\.?/", $key, $match) == false ){
-			return null;
-		}
-
-		$key = $match[1];
-
 		try {
 
-			$response = $this->client->GetSecretValue([
-				'SecretId' => $key
-			]);
+			$response = $this->client->GetSecretValue(
+				\array_merge([
+					'SecretId' => $key
+				], $options)
+			);
 
 		}
 		catch( SecretsManagerException $exception ) {
 			return null;
 		}
 
-		return [$key => \json_decode($response->get('SecretString'), true)];
+		return \json_decode($response->get('SecretString'), true);
 	}
 }

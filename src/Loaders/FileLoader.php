@@ -1,6 +1,7 @@
 <?php
 
-namespace nimbly\Config;
+namespace Caboodle\Loaders;
+
 
 class FileLoader implements LoaderInterface
 {
@@ -24,19 +25,14 @@ class FileLoader implements LoaderInterface
 	/**
      * @inheritDoc
      */
-    public function load(string $key): ?array
+    public function load(string $key, array $options = []): ?array
     {
-        if( \preg_match("/^([^\.]+)\.?/", $key, $match) == false ){
-			return null;
-		}
-
-		$key = $match[1];
 		$file = "{$this->path}/{$key}.php";
 
 		if( \file_exists($file) === false ){
 			return null;
 		}
 
-		return [$key => include $file];
+		return include $file;
 	}
 }

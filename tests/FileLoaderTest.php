@@ -1,12 +1,12 @@
 <?php
 
-namespace nimbly\Config\Tests;
+namespace Caboodle\Tests;
 
-use nimbly\Config\FileLoader;
+use Caboodle\Loaders\FileLoader;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers nimbly\Config\FileLoader
+ * @covers Caboodle\Loaders\FileLoader
  */
 class FileLoaderTest extends TestCase
 {
@@ -42,31 +42,19 @@ class FileLoaderTest extends TestCase
 		);
 	}
 
-	public function test_file_found_returns_keyed_array()
-	{
-		$loader = new FileLoader(__DIR__ . "/config");
-
-		$this->assertEquals(
-			"example",
-			\array_key_first($loader->load("example"))
-		);
-	}
-
 	public function test_file_found_returns_contents_of_file()
 	{
 		$loader = new FileLoader(__DIR__ . "/config");
 
 		$this->assertEquals(
 			[
-				"example" => [
-					"key1" => "value1",
-					"key2" => [
-						"key2_key1" => "value1"
-					],
-					"key3" => [
-						"key3_key1" => [
-							"key3_key1_key1" => "value1"
-						]
+				"key1" => "value1",
+				"key2" => [
+					"key2_key1" => "value1"
+				],
+				"key3" => [
+					"key3_key1" => [
+						"key3_key1_key1" => "value1"
 					]
 				]
 			],

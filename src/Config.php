@@ -1,6 +1,8 @@
 <?php
 
-namespace nimbly\Config;
+namespace Caboodle;
+
+use Caboodle\Loaders\LoaderInterface;
 
 
 class Config
@@ -17,7 +19,14 @@ class Config
      *
      * @var array<string, mixed>
      */
-    protected $items = [];
+	protected $items = [];
+
+	/**
+	 * Throw exception if value not found.
+	 *
+	 * @var boolean
+	 */
+	protected $throwIfNotFound = false;
 
     /**
      * Config constructor.
@@ -27,6 +36,17 @@ class Config
     public function __construct(array $loaders = [])
     {
         $this->loaders = $loaders;
+	}
+
+	/**
+	 * Enable/disable throwing an exception if a key is not found.
+	 *
+	 * @param boolean $throwIfNotFound
+	 * @return void
+	 */
+	public function setThrowIfNotFound(bool $throwIfNotFound = true): void
+	{
+		$this->throwIfNotFound = $throwIfNotFound;
 	}
 
 	/**
@@ -64,26 +84,31 @@ class Config
     }
 
     /**
-     * Resolve the flattened key into the actual value.
+     * Resolve a key and path into a value.
      *
-     * @param string $key
-     * @throws \Exception
+     * @param string $index
+	 * @param string|null $path
+     * @throws KeyNotFoundException
      * @return mixed
      */
-    protected function resolve(string $key)
+    protected function resolve(string $index, ?string $path = null)
     {
-        // Set the pointer at the root of the items array
-        $pointer = &$this->items;
+        // Set the pointer at the specified key.
+		$pointer = &$this->items[$index] ?? null;
 
-        /**
-         *
-         * Loop through all the parts and see if the key exists.
-         *
-         */
-        foreach( \explode(".", $key) as $part ){
+		if( empty($pointer) ){
+			throw new KeyNotFoundException("Key not found.");
+		}
+
+		// Break apart path dotted notation to traverse item store.
+        foreach( \explode(".", $path) as $part ){
+
+			if( empty($part) ){
+				continue;
+			}
 
             if( \array_key_exists($part, $pointer) === false ){
-                throw new ConfigException("Config key {$key} not found.");
+                throw new KeyNotFoundException("Key not found.");
             }
 
             $pointer = &$pointer[$part];
@@ -102,9 +127,11 @@ class Config
     {
         try {
 
-            $this->resolve($key);
+			list($index, $path) = $this->parseKey($key);
 
-        } catch( ConfigException $exception ){
+            $this->resolve($index, $path);
+
+        } catch( KeyNotFoundException $exception ){
 
             return false;
         }
@@ -113,31 +140,41 @@ class Config
     }
 
     /**
-     * Lazy load configuration files.
+     * Get a configuration value.
+	 *
+	 * Use dotted notation to get specific values. Eg, "database.connections.default.host"
+	 *
+	 * Returns *null* if key not found.
      *
      * @param string $key
-     * @param mixed|null $default
+     * @param array $options
+	 * @throws KeyNotFoundException
      * @return mixed
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, array $options = [])
     {
-		// Does this key/value pair exist in the item store?
+		list($index, $path) = $this->parseKey($key);
+
+		// If the key does not exist, try loading.
         if( $this->has($key) === false ){
-			$this->load($key);
+			$this->load($index, $options);
         }
 
 		// Try resolving now.
         try {
 
-            $configValue = $this->resolve($key);
+			$value = $this->resolve($index, $path);
 
-        } catch ( ConfigException $exception ){
+        } catch( KeyNotFoundException $exception ){
 
-            return $default;
+			if( $this->throwIfNotFound ){
+				throw $exception;
+			}
 
+            return null;
         }
 
-        return $configValue;
+        return $value;
     }
 
     /**
@@ -153,18 +190,35 @@ class Config
 	}
 
 	/**
-	 * Loop through loaders and attempt to load configuration.
+	 * Loop through loaders and attempt to load configuration data.
 	 *
-	 * @param string $key
+	 * Stop on the first loader that succeeds.
+	 *
+	 * @param string $index
 	 * @return void
 	 */
-	private function load(string $key): void
+	private function load(string $index): void
 	{
 		foreach( $this->loaders as $loader ){
-			if( ($items = \call_user_func([$loader, 'load'], $key)) ){
-				$this->items = \array_merge($this->items, $items);
+			if( ($items = \call_user_func([$loader, 'load'], $index)) ){
+				$this->items[$index] = $items;
 				break;
 			}
 		}
+	}
+
+	public function parseKey(string $key): array
+	{
+		// Key hint/tag.
+		if( \preg_match("/^([^\#]+)\#(.*)$/", $key, $match) ){
+			return [$match[1], $match[2]];
+		}
+
+		// Standard dotted notation.
+		elseif( \preg_match("/^([^\.]+)\.?(.*)$/", $key, $match) ){
+			return [$match[1], $match[2]];
+		}
+
+		return [null, null];
 	}
 }
