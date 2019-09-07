@@ -1,6 +1,6 @@
-# Config
+# Caboodle
 
-A simple configuration manager with lazy loading from files or AWS Secrets Manager.
+A simple configuration manager with lazy loading from files, AWS Secrets Manager, or any other source.
 
 ## Installation
 
@@ -88,6 +88,16 @@ Your configuration files may contain nested associative arrays that can be acces
 
 ```php
 $config->get("database.connections.default.host");
+```
+
+## Key hinting
+
+By default, the root key name is assumed to be everything before the first dot ("."). However, if the root key name includes a dot, you can hint the key name by using a single hash mark in place of a dot.
+
+For example:
+
+```php
+$config->get("prod.database#connections.default.hostname");
 ```
 
 ## Manually adding values
