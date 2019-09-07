@@ -29,16 +29,4 @@ class AwsLoaderTest extends TestCase
 			$property->getValue($loader)
 		);
 	}
-
-	public function test_invalid_key_returns_null()
-	{
-		$loader = new AwsLoader(new SecretsManagerClient([
-			'version' => 'latest',
-			'region' => 'us-west-2'
-		]));
-
-		$this->assertNull(
-			$loader->load(".")
-		);
-	}
 }
