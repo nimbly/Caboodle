@@ -101,7 +101,7 @@ class Config
 		}
 
 		// Break apart path dotted notation to traverse item store.
-        foreach( \explode(".", $path) as $part ){
+        foreach( \explode(".", $path ?? "") as $part ){
 
 			if( empty($part) ){
 				continue;
@@ -197,17 +197,23 @@ class Config
 	 * @param string $index
 	 * @return void
 	 */
-	private function load(string $index): void
+	private function load(string $index, array $options = []): void
 	{
 		foreach( $this->loaders as $loader ){
-			if( ($items = \call_user_func([$loader, 'load'], $index)) ){
+			if( ($items = \call_user_func_array([$loader, 'load'], [$index, $options])) ){
 				$this->items[$index] = $items;
 				break;
 			}
 		}
 	}
 
-	public function parseKey(string $key): array
+	/**
+	 * Parse a key into index and path values.
+	 *
+	 * @param string $key
+	 * @return array
+	 */
+	protected function parseKey(string $key): array
 	{
 		// Key hint/tag.
 		if( \preg_match("/^([^\#]+)\#(.*)$/", $key, $match) ){
