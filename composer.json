@@ -6,8 +6,8 @@
         "phpunit\/phpunit": "^8.3",
         "vimeo\/psalm": "^3.4",
         "php-coveralls\/php-coveralls": "^2.1",
-        "aws/aws-sdk-php": "^3.110",
-        "symfony/var-dumper": "^4.3"
+        "aws\/aws-sdk-php": "^3.110",
+        "symfony\/var-dumper": "^4.3"
     },
     "license": "MIT",
     "authors": [
@@ -18,14 +18,14 @@
     ],
     "require": {
         "php": ">=7.2"
-	},
-	"suggest": {
-		"aws/aws-sdk-php": "For using AwsLoader to load configurations from AWD Secrets Manager."
-	},
+    },
+    "suggest": {
+        "aws\/aws-sdk-php": "For using AwsLoader to load configurations from AWD Secrets Manager."
+    },
     "autoload": {
         "psr-4": {
             "Caboodle\\": "src\/"
         }
     },
-    "version": "0.1"
+    "version": "0.2"
 }
