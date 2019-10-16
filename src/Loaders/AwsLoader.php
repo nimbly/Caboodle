@@ -28,21 +28,25 @@ class AwsLoader implements LoaderInterface
 	/**
 	 * @inheritDoc
 	 */
-	public function load(string $key, array $options = []): ?array
+	public function load(string $key): ?array
 	{
 		try {
 
-			$response = $this->client->GetSecretValue(
-				\array_merge([
-					'SecretId' => $key
-				], $options)
-			);
+			$response = $this->client->GetSecretValue([
+				'SecretId' => $key
+			]);
 
 		}
 		catch( SecretsManagerException $exception ) {
 			return null;
 		}
 
-		return \json_decode($response->get('SecretString'), true);
+		$secret = $response->get('SecretString');
+
+		if( empty($secret) ){
+			return null;
+		}
+
+		return \json_decode($secret, true);
 	}
 }

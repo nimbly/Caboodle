@@ -25,7 +25,7 @@ class FileLoader implements LoaderInterface
 	/**
      * @inheritDoc
      */
-    public function load(string $key, array $options = []): ?array
+    public function load(string $key): ?array
     {
 		$file = "{$this->path}/{$key}.php";
 
