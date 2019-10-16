@@ -1,6 +1,6 @@
 # Caboodle
 
-A simple configuration manager with lazy loading from files, AWS Secrets Manager, or any other source.
+A simple PSR-11 compliant configuration manager with lazy loading from files, AWS Secrets Manager, or any other source.
 
 ## Installation
 
@@ -60,7 +60,7 @@ return [
 The ```AwsLoader``` will attempt to load configuration data from AWS Secrets Manager.
 
 ```NOTES```
-* If your AWS Secrets Manager keys include dots ("."), the loader will not be able to resolve the key name properly. It is suggested that your AWS keys be of the form ```db/default``` as suggested by AWS best practices.
+* If your AWS Secrets Manager keys include dots ("."), the loader will not be able to resolve the key name properly. It is suggested that your AWS keys be of the form ```prod/db/default``` as suggested by AWS best practices.
 * ```VersionId``` and ```StageVersion``` options are not available with this loader at this time.
 * ```SecretBinary``` values are not supported at this time. The loader will only look for values in the ```SecretString``` property.
 
@@ -88,6 +88,17 @@ Your configuration files may contain nested associative arrays that can be acces
 
 ```php
 $config->get("database.connections.default.host");
+```
+## PSR-11 note
+
+By default, Caboodle will return a ```null``` if an item is not found in the item store.
+
+However, PSR-11 states that when an item is not found, it should throw an instance of ```NotFoundExceptionInterface```.
+
+If you would like Caboodle to throw an exception when an item is not found, you may call the ```setThrowIfNotFound()``` method.
+
+```php
+$config->setThrowIfNotFound(true);
 ```
 
 ## Key hinting
