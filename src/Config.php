@@ -3,9 +3,9 @@
 namespace Caboodle;
 
 use Caboodle\Loaders\LoaderInterface;
+use Psr\Container\ContainerInterface;
 
-
-class Config
+class Config implements ContainerInterface
 {
 	/**
 	 * Set of LoaderInterfaces to resolve config names.
@@ -22,7 +22,8 @@ class Config
 	protected $items = [];
 
 	/**
-	 * Throw exception if value not found.
+	 * Throw a KeyNotFoundException when config key
+	 * is not found instead of a null.
 	 *
 	 * @var boolean
 	 */
@@ -36,17 +37,6 @@ class Config
     public function __construct(array $loaders = [])
     {
         $this->loaders = $loaders;
-	}
-
-	/**
-	 * Enable/disable throwing an exception if a key is not found.
-	 *
-	 * @param boolean $throwIfNotFound
-	 * @return void
-	 */
-	public function setThrowIfNotFound(bool $throwIfNotFound = true): void
-	{
-		$this->throwIfNotFound = $throwIfNotFound;
 	}
 
 	/**
@@ -81,7 +71,19 @@ class Config
     public function all(): array
     {
         return $this->items;
-    }
+	}
+
+	/**
+	 * Enable/disable throwing KeyNotFoundException when getting a key
+	 * that does not exist.
+	 *
+	 * @param boolean $enable
+	 * @return void
+	 */
+	public function setThrowIfNotFound(bool $enable): void
+	{
+		$this->throwIfNotFound = $enable;
+	}
 
     /**
      * Resolve a key and path into a value.
@@ -118,12 +120,12 @@ class Config
     }
 
     /**
-     * See if config has given key.
+     * Test if config has given key.
      *
      * @param string $key
      * @return boolean
      */
-    public function has(string $key): bool
+    public function has($key): bool
     {
         try {
 
@@ -131,7 +133,7 @@ class Config
 
             $this->resolve($index, $path);
 
-        } catch( KeyNotFoundException $exception ){
+        } catch( KeyNotFoundException $e ){
 
             return false;
         }
@@ -143,38 +145,34 @@ class Config
      * Get a configuration value.
 	 *
 	 * Use dotted notation to get specific values. Eg, "database.connections.default.host"
-	 *
-	 * Returns *null* if key not found.
      *
      * @param string $key
-     * @param array $options
 	 * @throws KeyNotFoundException
      * @return mixed
      */
-    public function get(string $key, array $options = [])
+    public function get($key)
     {
 		list($index, $path) = $this->parseKey($key);
 
 		// If the key does not exist, try loading.
         if( $this->has($key) === false ){
-			$this->load($index, $options);
+			$this->load($index);
         }
 
-		// Try resolving now.
-        try {
+		try {
 
 			$value = $this->resolve($index, $path);
 
-        } catch( KeyNotFoundException $exception ){
+		} catch( KeyNotFoundException $keyNotFoundException ){
 
 			if( $this->throwIfNotFound ){
-				throw $exception;
+				throw $keyNotFoundException;
 			}
 
-            return null;
-        }
+			return null;
+		}
 
-        return $value;
+		return $value;
     }
 
     /**
@@ -197,10 +195,10 @@ class Config
 	 * @param string $index
 	 * @return void
 	 */
-	private function load(string $index, array $options = []): void
+	private function load(string $index): void
 	{
 		foreach( $this->loaders as $loader ){
-			if( ($items = \call_user_func_array([$loader, 'load'], [$index, $options])) ){
+			if( ($items = \call_user_func([$loader, 'load'], $index)) ){
 				$this->items[$index] = $items;
 				break;
 			}

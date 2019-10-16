@@ -2,8 +2,9 @@
 
 namespace Caboodle;
 
+use Psr\Container\NotFoundExceptionInterface;
 
-class KeyNotFoundException extends ConfigException
+class KeyNotFoundException extends ConfigException implements NotFoundExceptionInterface
 {
 
 }
