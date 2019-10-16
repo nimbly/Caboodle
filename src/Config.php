@@ -95,7 +95,12 @@ class Config implements ContainerInterface
      */
     protected function resolve(string $index, ?string $path = null)
     {
-        // Set the pointer at the specified key.
+		// Attempt to load the data if it's not found.
+		if( empty($this->items[$index]) ){
+			$this->load($index);
+		}
+
+		// Set the pointer at the specified key.
 		$pointer = &$this->items[$index] ?? null;
 
 		if( empty($pointer) ){
@@ -154,11 +159,6 @@ class Config implements ContainerInterface
     {
 		list($index, $path) = $this->parseKey($key);
 
-		// If the key does not exist, try loading.
-        if( $this->has($key) === false ){
-			$this->load($index);
-        }
-
 		try {
 
 			$value = $this->resolve($index, $path);
@@ -197,8 +197,12 @@ class Config implements ContainerInterface
 	 */
 	private function load(string $index): void
 	{
+		/** @var LoaderInterface $loader */
 		foreach( $this->loaders as $loader ){
-			if( ($items = \call_user_func([$loader, 'load'], $index)) ){
+
+			$items = $loader->load($index);
+
+			if( $items !== null ){
 				$this->items[$index] = $items;
 				break;
 			}
@@ -209,7 +213,8 @@ class Config implements ContainerInterface
 	 * Parse a key into index and path values.
 	 *
 	 * @param string $key
-	 * @return array
+	 * @throws ConfigException
+	 * @return array<string>
 	 */
 	protected function parseKey(string $key): array
 	{
@@ -223,6 +228,6 @@ class Config implements ContainerInterface
 			return [$match[1], $match[2]];
 		}
 
-		return [null, null];
+		throw new ConfigException("Invalid key {$key}.");
 	}
 }
