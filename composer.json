@@ -3,8 +3,8 @@
     "description": "Configuration and settings manager with autoloading from disk or AWS Secrets Manager.",
     "type": "library",
     "require-dev": {
-        "phpunit/phpunit": "^8.3",
-        "vimeo/psalm": "^3.4",
+        "phpunit/phpunit": "^9.0",
+        "vimeo/psalm": "^4.0",
         "php-coveralls/php-coveralls": "^2.1",
         "aws/aws-sdk-php": "^3.110",
         "symfony/var-dumper": "^4.3"
@@ -17,11 +17,11 @@
         }
     ],
     "require": {
-		"php": ">=7.2",
+		"php": "^7.4|^8.0",
         "psr/container": "^1.0"
     },
     "suggest": {
-        "aws/aws-sdk-php": "For using AwsLoader to load configurations from AWD Secrets Manager."
+        "aws/aws-sdk-php": "For using AwsLoader to load configurations from AWS Secrets Manager."
     },
     "autoload": {
         "psr-4": {
