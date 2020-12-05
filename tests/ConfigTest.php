@@ -10,6 +10,10 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers Caboodle\Config
  * @covers Caboodle\Loaders\FileLoader
+ * @covers Caboodle\ConfigException
+ * @covers Caboodle\KeyNotFoundException
+ *
+ * @uses Caboodle\Loaders\LoaderInterface
  */
 class ConfigTest extends TestCase
 {
