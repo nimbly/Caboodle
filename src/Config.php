@@ -3,7 +3,6 @@
 namespace Nimbly\Caboodle;
 
 use Psr\Container\ContainerInterface;
-
 class Config implements ContainerInterface
 {
 	/**

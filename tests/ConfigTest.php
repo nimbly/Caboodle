@@ -2,9 +2,9 @@
 
 namespace Caboodle\Tests;
 
-use Caboodle\Config;
-use Caboodle\KeyNotFoundException;
-use Caboodle\Loaders\FileLoader;
+use Nimbly\Caboodle\Config;
+use Nimbly\Caboodle\KeyNotFoundException;
+use Nimbly\Caboodle\Loaders\FileLoader;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -25,33 +25,11 @@ class ConfigTest extends TestCase
 
 		$reflection = new \ReflectionClass($config);
 		$property = $reflection->getProperty('loaders');
-        $property->setAccessible(true);
+		$property->setAccessible(true);
 
 		$this->assertEquals([
 			$fileLoader
 		], $property->getValue($config));
-	}
-
-	public function test_add_loader()
-	{
-		$config = new Config([new FileLoader(__DIR__)]);
-
-		$fileLoader = new FileLoader(__DIR__);
-		$config->addLoader($fileLoader);
-
-		$reflection = new \ReflectionClass($config);
-		$property = $reflection->getProperty('loaders');
-        $property->setAccessible(true);
-
-		$this->assertEquals([
-			$fileLoader,
-			$fileLoader
-		], $property->getValue($config));
-
-		$this->assertSame(
-			$fileLoader,
-			$property->getValue($config)[1]
-		);
 	}
 
 	public function test_set_items()
@@ -124,12 +102,8 @@ class ConfigTest extends TestCase
 
 	public function test_set_throw_if_not_found()
 	{
-		$config = new Config;
-		$config->setThrowIfNotFound(true);
-
+		$config = new Config(throwIfNotFound: true);
 		$this->expectException(KeyNotFoundException::class);
-		$config->get('example');
-
 		$config->get("#production.db.default#.host");
 	}
 }

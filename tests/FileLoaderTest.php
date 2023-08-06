@@ -2,7 +2,7 @@
 
 namespace Caboodle\Tests;
 
-use Caboodle\Loaders\FileLoader;
+use Nimbly\Caboodle\Loaders\FileLoader;
 use PHPUnit\Framework\TestCase;
 
 /**

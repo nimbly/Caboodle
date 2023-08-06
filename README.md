@@ -1,5 +1,10 @@
 # Caboodle
 
+[![Latest Stable Version](https://img.shields.io/packagist/v/nimbly/caboodle.svg?style=flat-square)](https://packagist.org/packages/nimbly/Caboodle)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/nimbly/caboodle/php.yml?style=flat-square)](https://github.com/nimbly/Caboodle/actions/workflows/php.yml)
+[![Codecov branch](https://img.shields.io/codecov/c/github/nimbly/caboodle/master?style=flat-square)](https://app.codecov.io/github/nimbly/Caboodle)
+[![License](https://img.shields.io/github/license/nimbly/Caboodle.svg?style=flat-square)](https://packagist.org/packages/nimbly/Caboodle)
+
 A simple PSR-11 compliant configuration manager with lazy loading from files, AWS Secrets Manager, or any other source.
 
 ## Installation
@@ -10,7 +15,7 @@ composer require nimbly/config
 
 ## Usage
 
-Instantiate the ```Config``` manager with an array of LoaderInterface instances. You may specify as many loaders as you"d like - or none at all.
+Instantiate the `Config` manager with an array of LoaderInterface instances. You may specify as many loaders as you"d like - or none at all.
 
 ```php
 $config = new Config([
@@ -26,15 +31,15 @@ $config->get("database.hostname");
 
 ### Loaders
 
-Loaders are responisble for accepting a ```key```, loading, and then passing the data back.
+Loaders are responisble for accepting a `key`, loading, and then passing the data back.
 
-Two loaders are provided out of the box: ```FileLoader``` and ```AwsLoader``` but a ```LoaderInterface``` is provided for implementing any other loader.
+Two loaders are provided out of the box: `FileLoader` and `AwsLoader` but a `LoaderInterface` is provided for implementing any other loader.
 
 #### FileLoader
 
-The ```FileLoader``` will attempt to load configuration data from the local filesystem.
+The `FileLoader` will attempt to load configuration data from the local filesystem.
 
-Instantiate the ```FileLoader``` with a path to your configuration files.
+Instantiate the `FileLoader` with a path to your configuration files.
 
 ```php
 new FileLoader("/path/to/config/files");
@@ -57,12 +62,12 @@ return [
 
 #### AwsLoader
 
-The ```AwsLoader``` will attempt to load configuration data from AWS Secrets Manager.
+The `AwsLoader` will attempt to load configuration data from AWS Secrets Manager.
 
-```NOTES```
-* If your AWS Secrets Manager keys include dots ("."), the loader will not be able to resolve the key name properly. It is suggested that your AWS keys be of the form ```prod/db/default``` as suggested by AWS best practices.
-* ```VersionId``` and ```StageVersion``` options are not available with this loader at this time.
-* ```SecretBinary``` values are not supported at this time. The loader will only look for values in the ```SecretString``` property.
+##### NOTES
+* If your AWS Secrets Manager keys include dots ("."), the loader will not be able to resolve the key name properly. It is suggested that your AWS keys be of the form `prod/db/default` as suggested by AWS best practices.
+* `VersionId` and `StageVersion` options are not available with this loader at this time.
+* `SecretBinary` values are not supported at this time. The loader will only look for values in the `SecretString` property.
 
 ## Adding loaders dynamically
 
@@ -76,13 +81,13 @@ $config->addLoader(
 
 ## Accessing values
 
-Configuration keys can be accessed using a dot-notation syntax with the left most being the ```key``` the loaders will use to resolve and load the configuration data.
+Configuration keys can be accessed using a dot-notation syntax with the left most being the `key` the loaders will use to resolve and load the configuration data.
 
 ```php
 $config->get("database.host");
 ```
 
-The above would load the contents of the file ```database.php``` from the configuration path passed into the ```Config``` manager.
+The above would load the contents of the file `database.php` from the configuration path passed into the `Config` manager.
 
 Your configuration files may contain nested associative arrays that can be accessed using the same dotted notation.
 
@@ -91,11 +96,11 @@ $config->get("database.connections.default.host");
 ```
 ## PSR-11 note
 
-By default, Caboodle will return a ```null``` if an item is not found in the item store.
+By default, Caboodle will return a `null` if an item is not found in the item store.
 
-However, PSR-11 states that when an item is not found, it should throw an instance of ```NotFoundExceptionInterface```.
+However, PSR-11 states that when an item is not found, it should throw an instance of `NotFoundExceptionInterface`.
 
-If you would like Caboodle to throw an exception when an item is not found, you may call the ```setThrowIfNotFound()``` method.
+If you would like Caboodle to throw an exception when an item is not found, you may call the `setThrowIfNotFound()` method.
 
 ```php
 $config->setThrowIfNotFound(true);

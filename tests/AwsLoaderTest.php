@@ -3,7 +3,7 @@
 namespace Caboodle\Tests;
 
 use Aws\SecretsManager\SecretsManagerClient;
-use Caboodle\Loaders\AwsLoader;
+use Nimbly\Caboodle\Loaders\AwsLoader;
 use PHPUnit\Framework\TestCase;
 
 /**
