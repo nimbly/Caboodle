@@ -1,11 +1,9 @@
 <?php
 
-namespace Caboodle;
+namespace Nimbly\Caboodle;
 
 use Exception;
 
-
 class ConfigException extends Exception
 {
-
 }

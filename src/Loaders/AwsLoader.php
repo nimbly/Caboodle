@@ -1,28 +1,19 @@
 <?php
 
-namespace Caboodle\Loaders;
+namespace Nimbly\Caboodle\Loaders;
 
 use Aws\SecretsManager\Exception\SecretsManagerException;
 use Aws\SecretsManager\SecretsManagerClient;
-
+use Nimbly\Caboodle\LoaderInterface;
 
 class AwsLoader implements LoaderInterface
 {
 	/**
-	 * SecretsManagerClient instance.
-	 *
-	 * @var SecretsManagerClient
+	 * @param SecretsManagerClient $client SecretsManagerClient instance.
 	 */
-	protected $client;
-
-	/**
-	 * AwsLoader constructor.
-	 *
-	 * @param SecretsManagerClient $client
-	 */
-	public function __construct(SecretsManagerClient $client)
+	public function __construct(
+		protected SecretsManagerClient $client)
 	{
-		$this->client = $client;
 	}
 
 	/**
@@ -33,15 +24,15 @@ class AwsLoader implements LoaderInterface
 		try {
 
 			$response = $this->client->GetSecretValue([
-				'SecretId' => $key
+				"SecretId" => $key
 			]);
 
 		}
-		catch( SecretsManagerException $exception ) {
+		catch( SecretsManagerException ) {
 			return null;
 		}
 
-		$secret = $response->get('SecretString');
+		$secret = $response->get("SecretString");
 
 		if( empty($secret) ){
 			return null;

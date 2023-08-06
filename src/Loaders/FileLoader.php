@@ -1,32 +1,24 @@
 <?php
 
-namespace Caboodle\Loaders;
+namespace Nimbly\Caboodle\Loaders;
 
+use Nimbly\Caboodle\LoaderInterface;
 
 class FileLoader implements LoaderInterface
 {
 	/**
-	 * The base path where the config files can be found.
-	 *
-	 * @var string
+	 * @param string $path Path where configutation files can be found.
 	 */
-	protected $path;
-
-	/**
-	 * FileLoader constructor.
-	 *
-	 * @param string $path
-	 */
-	public function __construct(string $path)
+	public function __construct(
+		protected string $path)
 	{
-		$this->path = $path;
 	}
 
 	/**
-     * @inheritDoc
-     */
-    public function load(string $key): ?array
-    {
+	 * @inheritDoc
+	 */
+	public function load(string $key): ?array
+	{
 		$file = "{$this->path}/{$key}.php";
 
 		if( \file_exists($file) === false ){

@@ -1,6 +1,6 @@
 <?php
 
-namespace Caboodle\Loaders;
+namespace Nimbly\Caboodle;
 
 interface LoaderInterface
 {
@@ -8,7 +8,7 @@ interface LoaderInterface
 	 * Load a key from the storage provider.
 	 *
 	 * @param string $key
-	 * @return array<string, mixed>|null
+	 * @return array<array-key,mixed>|null
 	 */
 	public function load(string $key): ?array;
 }
