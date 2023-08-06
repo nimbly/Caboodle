@@ -7,7 +7,7 @@ use Nimbly\Caboodle\Loaders\AwsLoader;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Caboodle\Loaders\AwsLoader
+ * @covers Nimbly\Caboodle\Loaders\AwsLoader
  */
 class AwsLoaderTest extends TestCase
 {

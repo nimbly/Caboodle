@@ -6,7 +6,7 @@ use Nimbly\Caboodle\Loaders\FileLoader;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Caboodle\Loaders\FileLoader
+ * @covers Nimbly\Caboodle\Loaders\FileLoader
  */
 class FileLoaderTest extends TestCase
 {

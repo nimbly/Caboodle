@@ -8,12 +8,12 @@ use Nimbly\Caboodle\Loaders\FileLoader;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Caboodle\Config
- * @covers Caboodle\Loaders\FileLoader
- * @covers Caboodle\ConfigException
- * @covers Caboodle\KeyNotFoundException
+ * @covers Nimbly\Caboodle\Config
+ * @covers Nimbly\Caboodle\Loaders\FileLoader
+ * @covers Nimbly\Caboodle\ConfigException
+ * @covers Nimbly\Caboodle\KeyNotFoundException
  *
- * @uses Caboodle\Loaders\LoaderInterface
+ * @uses Nimbly\Caboodle\LoaderInterface
  */
 class ConfigTest extends TestCase
 {
